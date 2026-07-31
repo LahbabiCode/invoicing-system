@@ -41,5 +41,5 @@ ENV HOSTNAME=0.0.0.0
 
 EXPOSE 3000
 
-# Create tables + seed admin via better-sqlite3 directly (no Prisma CLI = no segfault), then launch
-CMD node scripts/seed-admin.mjs && node server.js
+# DIAGNOSTIC MODE - testing native modules then bootstrap
+CMD node -e "console.log('diag start', process.version, process.cwd()); const D=require('better-sqlite3'); console.log('sqlite:', new D(':memory:').prepare('SELECT 1 AS x').get().x); console.log('diag ok')" && node scripts/seed-admin.mjs && echo "SEED OK" && node server.js; echo "SERVER EXIT CODE: $?"
