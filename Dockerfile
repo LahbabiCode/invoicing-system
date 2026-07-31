@@ -41,5 +41,5 @@ ENV HOSTNAME=0.0.0.0
 
 EXPOSE 3000
 
-# DIAGNOSTIC - test better-sqlite3 native module
-CMD node -e "console.log('A node', process.version); const D=require('better-sqlite3'); console.log('B sqlite', JSON.stringify(new D(':memory:').prepare('SELECT 1 AS x').get())); console.log('C OK')"
+# DIAGNOSTIC - test better-sqlite3, keep alive for log capture
+CMD node -e "console.log('A node', process.version); const D=require('better-sqlite3'); console.log('B sqlite', JSON.stringify(new D(':memory:').prepare('SELECT 1 AS x').get())); console.log('C OK'); setInterval(()=>{}, 1000)"
