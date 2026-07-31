@@ -1,0 +1,6 @@
+{
+  "name": "Zakariae Lahbabi - Invoicing System",
+  "description": "منصة مفتوحة المصدر لإدارة وتوليد الفواتير الاحترافية المعتمدة للمستقلين والمطورين بصيغ PDF و HTML و DOCX",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

@@ -1,0 +1,89 @@
+datasource db {
+  provider = "sqlite"
+}
+
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+model CompanyProfile {
+  id            String  @id @default("profile")
+  name          String
+  title         String
+  email         String
+  phone         String
+  address       String
+  website       String
+  taxNumber     String
+  commercialReg String
+  bankName      String
+  bankIBAN      String
+  bankSwift     String
+  logoUrl       String?
+  signatureUrl  String?
+  primaryColor  String
+  templateTheme String
+}
+
+model Client {
+  id          String    @id @default(uuid())
+  name        String
+  companyName String
+  email       String
+  phone       String
+  address     String
+  country     String
+  taxNumber   String?
+  currency    String
+  invoices    Invoice[]
+}
+
+model Invoice {
+  id                 String  @id @default(uuid())
+  number             String  @unique
+  createdAt          String
+  dueDate            String
+  status             String
+  clientId           String
+  client             Client  @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  profileData        String  // JSON serialized profile snapshot
+  itemsData          String  // JSON serialized InvoiceItem[]
+  subtotal           Float
+  taxPercentage      Float
+  taxAmount          Float
+  discountPercentage Float
+  discountAmount     Float
+  totalAmount        Float
+  paidAmount         Float
+  currency           String
+  notes              String
+  terms              String
+  language           String
+  paymentMethod      String?
+  qrCodeData         String?
+}
+
+model PaymentReminder {
+  id            String  @id @default(uuid())
+  invoiceId     String
+  invoiceNumber String
+  clientName    String
+  clientEmail   String
+  amount        Float
+  currency      String
+  dueDate       String
+  daysOverdue   Int
+  status        String
+  tone          String
+  generatedText String
+  lastSentAt    String?
+}
+
+model User {
+  id           String @id @default(uuid())
+  email        String @unique
+  passwordHash String
+  role         String @default("admin")
+  createdAt    String
+}
