@@ -41,5 +41,5 @@ ENV HOSTNAME=0.0.0.0
 
 EXPOSE 3000
 
-# Migrate + seed on startup, then launch
-CMD npx prisma migrate deploy && node scripts/seed-admin.mjs; node server.js
+# Create tables + seed admin via better-sqlite3 directly (no Prisma CLI = no segfault), then launch
+CMD node scripts/seed-admin.mjs && node server.js
