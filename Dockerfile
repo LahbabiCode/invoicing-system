@@ -9,9 +9,10 @@ FROM node:20-slim AS builder
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
-RUN apt-get update && apt-get install -y --no-install-recommends openssl ca-certificates \
+RUN apt-get update && apt-get install -y --no-install-recommends openssl ca-certificates python3 make g++ \
   && rm -rf /var/lib/apt/lists/* \
-  && npx prisma generate
+  && npx prisma generate \
+  && npm rebuild better-sqlite3
 RUN npm run build
 
 FROM node:20-slim AS runner
