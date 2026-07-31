@@ -41,5 +41,5 @@ ENV HOSTNAME=0.0.0.0
 
 EXPOSE 3000
 
-# DIAGNOSTIC MODE - testing native modules then bootstrap
-CMD node -e "console.log('diag start', process.version, process.cwd()); const D=require('better-sqlite3'); console.log('sqlite:', new D(':memory:').prepare('SELECT 1 AS x').get().x); console.log('diag ok')" && node scripts/seed-admin.mjs && echo "SEED OK" && node server.js; echo "SERVER EXIT CODE: $?"
+# DIAGNOSTIC - test better-sqlite3 native module
+CMD node -e "console.log('A node', process.version); const D=require('better-sqlite3'); console.log('B sqlite', JSON.stringify(new D(':memory:').prepare('SELECT 1 AS x').get())); console.log('C OK')"
