@@ -1,9 +1,9 @@
 FROM node:20-slim AS deps
 WORKDIR /app
 COPY package.json package-lock.json ./
-RUN apt-get update && apt-get install -y --no-install-recommends python3 make g++ \
+RUN apt-get update && apt-get install -y --no-install-recommends python3 make g++ libssl-dev libtool autoconf automake pkg-config \
   && rm -rf /var/lib/apt/lists/* \
-  && npm ci
+  && npm ci --foreground-scripts
 
 FROM node:20-slim AS builder
 WORKDIR /app
