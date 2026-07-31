@@ -1,29 +1,24 @@
 FROM node:20-slim AS deps
 WORKDIR /app
 COPY package.json package-lock.json ./
-RUN apt-get update && apt-get install -y --no-install-recommends python3 make g++ libssl-dev libtool autoconf automake pkg-config \
-  && rm -rf /var/lib/apt/lists/* \
-  && npm ci --foreground-scripts
+RUN npm ci
 
 FROM node:20-slim AS builder
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
-RUN apt-get update && apt-get install -y --no-install-recommends openssl ca-certificates python3 make g++ \
+RUN apt-get update && apt-get install -y --no-install-recommends openssl \
   && rm -rf /var/lib/apt/lists/* \
-  && npx prisma generate \
-  && npm rebuild better-sqlite3
+  && npx prisma generate
 RUN npm run build
 
 FROM node:20-slim AS runner
 WORKDIR /app
 
-# openssl required by Prisma query engine / better-sqlite3
-RUN apt-get update && apt-get install -y --no-install-recommends openssl ca-certificates \
+RUN apt-get update && apt-get install -y --no-install-recommends openssl \
   && rm -rf /var/lib/apt/lists/*
 
 ENV NODE_ENV=production
-
 COPY --from=builder /app/.next/standalone ./
 COPY --from=builder /app/.next/static ./.next/static
 COPY --from=builder /app/prisma ./prisma
@@ -33,7 +28,6 @@ COPY --from=builder /app/scripts ./scripts
 COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/package.json ./package.json
 
-# Persistent volume mount point for SQLite DB
 RUN mkdir -p /data
 
 ENV DATABASE_URL=file:/data/prod.db
@@ -42,5 +36,4 @@ ENV HOSTNAME=0.0.0.0
 
 EXPOSE 3000
 
-# DIAGNOSTIC - run entrypoint script (tests native modules, keeps alive)
 CMD ["sh", "scripts/entrypoint.sh"]
